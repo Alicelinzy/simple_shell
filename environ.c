@@ -26,6 +26,7 @@ char *_getenv(info_t *info, const char *name)
 
 	while (node)
 	{
+		if (info->env)
 		p = starts_with(node->str, name);
 		if (p && *p)
 			return (p);
@@ -49,8 +50,8 @@ int _mysetenv(info_t *info)
 		return (1);
 	}
 	if (_setenv(info, info->argv[1], info->argv[2]))
-		return (0);
-	return (1);
+		return (1);
+	return (0);
 }
 
 /**
@@ -68,7 +69,7 @@ int _myunsetenv(info_t *info)
 		_eputs("Too few arguements.\n");
 		return (1);
 	}
-	for (i = 1; i <= info->argc; i++)
+	for (i = 1; i <= info->argc - 1; i++)
 		_unsetenv(info, info->argv[i]);
 
 	return (0);
@@ -89,4 +90,15 @@ int populate_env_list(info_t *info)
 		add_node_end(&node, environ[i], 0);
 	info->env = node;
 	return (0);
+}
+
+/**
+ * free_env_list - frees the environment list
+ * @info: Structure containing potential arguments. Used to maintain
+ *        constant function prototype.
+ * Return: void
+ */
+void free_env_list(info_t *info)
+{
+    free_list(&(info->env));
 }
